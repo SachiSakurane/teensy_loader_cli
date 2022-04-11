@@ -601,7 +601,6 @@ void detach_callback(void *context, IOReturn r, void *hid_mgr, IOHIDDeviceRef de
 void init_hid_manager(void)
 {
 	CFMutableDictionaryRef dict;
-	IOReturn ret;
 
 	if (hid_manager) return;
 	hid_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
@@ -618,13 +617,7 @@ void init_hid_manager(void)
 	IOHIDManagerScheduleWithRunLoop(hid_manager, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	IOHIDManagerRegisterDeviceMatchingCallback(hid_manager, attach_callback, NULL);
 	IOHIDManagerRegisterDeviceRemovalCallback(hid_manager, detach_callback, NULL);
-	ret = IOHIDManagerOpen(hid_manager, kIOHIDOptionsTypeNone);
-	if (ret != kIOReturnSuccess) {
-		IOHIDManagerUnscheduleFromRunLoop(hid_manager,
-			CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-		CFRelease(hid_manager);
-		printf_verbose("Error opening HID Manager\n");
-	}
+	IOHIDManagerOpen(hid_manager, kIOHIDOptionsTypeNone);
 }
 
 static void do_run_loop(void)
